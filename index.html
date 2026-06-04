@@ -1868,6 +1868,84 @@ const Q_MULTI_TYPE = [
    lesson:'知道自己的財務優先順序，就不容易在月底問「錢去哪了」。'},
 ];
 
+// ═══════════════════════════════════════════════
+// TRAIT (理財觀) — SPECIFIC QUESTION POOLS
+// One signature question per personality / financial mindset.
+// Surfaced via req:{trait:'...'} and guaranteed a slot in selection.
+// ═══════════════════════════════════════════════
+const Q_TRAIT_ENJOY = [
+  {id:'tr_enjoy1',age:null,phase:'理財觀・享樂',iconName:'smile',scene:'fomo',
+   req:{trait:'enjoy'},
+   title:'限時優惠：夢想中的旅行只到今晚',
+   desc:'你一直想去的旅程現在打對折，金額剛好等於你這個月原本要存的錢。享樂型的你，心一直癢。',
+   tip:'享樂沒有錯，重點是「先付給未來的自己，再享受剩下的」。',
+   choices:[
+     {t:'刷下去！人生就是要享受當下',h:'快樂滿分，但存款歸零。',m:['快樂++','零存款'],e:{cash:-30000,happy:20,stress:6},r:'你創造了難忘回憶。但如果每次「限時」都全押，未來的自己會一直在補洞。'},
+     {t:'用之前存的旅遊基金去，這個月照常存',h:'兩全：享受又不破壞計畫。',m:['平衡','有規劃'],e:{cash:-12000,happy:16,stress:-4},r:'你早就為「享受」留了一個專戶。這就是享樂型最聰明的玩法——把快樂編進預算。',asset:'travel',lt:{type:'saving',amount:2000,label:'設立旅遊基金'}},
+     {t:'這次忍住，把錢投進去',h:'理性，但壓抑的快樂會反彈。',m:['存款+','壓抑'],e:{asset:12000,cash:-12000,happy:-6,stress:8},r:'你存下來了，但對享樂型，過度壓抑常導致之後報復性消費。有計畫地快樂更可持續。'},
+     {t:'分期付款，先玩再說',h:'即時享受，但揹利息。',m:['快樂+','利息'],e:{cash:-5000,expense:2500,happy:14,stress:10},r:'分期讓你現在就出發，但旅行結束後還要還好幾個月，利息讓這趟旅程更貴了。'},
+   ],
+   lesson:'享樂型理財心法：開一個「玩樂專戶」，每月先撥一筆。花得開心、也不傷根基。'},
+];
+const Q_TRAIT_ANXIOUS = [
+  {id:'tr_anx1',age:null,phase:'理財觀・焦慮',iconName:'activity',scene:'invest',
+   req:{trait:'anxious'},
+   title:'你存款很多，但一看到投資就害怕',
+   desc:'你習慣把錢全放定存，帳戶數字讓你安心。但你也發現，這些錢的購買力每年都在被通膨吃掉。',
+   tip:'過度保守也是一種風險——確定性的緩慢貶值，常比波動更傷。',
+   choices:[
+     {t:'拿一小部分（10%）開始定期定額，其他不動',h:'用最小壓力跨出第一步。',m:['安全+','開始投資'],e:{asset:6000,cash:-6000,happy:3,stress:-2},r:'你用「可承受的小額」降低焦慮。對焦慮型來說，先求習慣、再求金額，是最好的節奏。',asset:'invest',lt:{type:'invest',amount:300,label:'小額定期定額起步'}},
+     {t:'全部繼續放定存，求安心',h:'心理安全，但購買力縮水。',m:['零波動','購買力-'],e:{happy:-2,stress:4},r:'數字沒變，但每年通膨讓它默默變薄。安心是真的，慢慢變窮也是真的。'},
+     {t:'先設定一個「夠用就好」的目標金額',h:'把焦慮轉成具體計畫。',m:['計畫+','安定'],e:{cash:5000,happy:4,stress:-8},r:'你把模糊的不安變成清楚的數字目標。對焦慮型，明確的計畫本身就是最好的安定劑。'},
+     {t:'聽信明牌一次重押想快點追上',h:'焦慮下的衝動最危險。',m:['高風險','可能大虧'],e:{asset:-15000,cash:-15000,happy:-6,stress:20},r:'焦慮驅動的重押，往往買在高點、賣在低點。越急著追，越容易受傷。'},
+   ],
+   lesson:'焦慮型理財心法：別逼自己一次到位。從10%、每月小額開始，讓「投資」變成不可怕的習慣。'},
+];
+const Q_TRAIT_AMBITIOUS = [
+  {id:'tr_amb1',age:null,phase:'理財觀・野心',iconName:'zap',scene:'career',
+   req:{trait:'ambitious'},
+   title:'一個高風險高報酬的副業機會找上你',
+   desc:'朋友邀你合資一個很有潛力的副業，可能讓收入翻倍，但要投入你大部分的積蓄和大量時間。',
+   tip:'野心是引擎，但沒有底線的槓桿會讓一次失敗就出局。',
+   choices:[
+     {t:'全押！機會難得，賭一把',h:'報酬可能很高，但風險全揹。',m:['收入潛力++','全壓風險'],e:{cash:-50000,income:6000,happy:4,stress:20},r:'你重押了夢想。可能大賺，也可能血本無歸。野心型最該記得：先確保輸得起，再去贏。'},
+     {t:'只投「輸得起」的金額，保留備用金',h:'進攻同時守住底線。',m:['積極','有底線'],e:{cash:-20000,income:4000,happy:6,stress:6},r:'你既追求成長、又守住緊急備用金。這是野心型能長期勝出的關鍵：活得夠久，才能等到複利。',lt:{type:'income',amount:4000,label:'副業收入起步'}},
+     {t:'先做市場驗證，小規模試一個月',h:'用最低成本測試假設。',m:['理性+','降低風險'],e:{cash:-5000,income:2000,happy:5,stress:2},r:'你像創業者一樣先驗證再放大。這讓你的野心建立在數據上，而不是衝動上。'},
+     {t:'拒絕，專心把本業薪水衝高',h:'聚焦，但可能錯過機會。',m:['穩定','專注本業'],e:{income:5000,cash:3000,happy:2,stress:4},r:'你把火力集中在本業。對野心型也是有效路徑——主動收入的成長同樣是強大的財富引擎。',lt:{type:'income',amount:5000,label:'本業加薪'}},
+   ],
+   lesson:'野心型理財心法：先存好6個月緊急備用金當安全網，再用「輸得起的錢」追高報酬。活得久才贏得了。'},
+];
+const Q_TRAIT_BALANCED = [
+  {id:'tr_bal1',age:null,phase:'理財觀・平衡',iconName:'scale',scene:'bonus',
+   req:{trait:'balanced'},
+   title:'一筆意外之財，你會怎麼切這塊餅？',
+   desc:'你收到一筆8萬元的意外獎金。平衡型的你，想兼顧現在的快樂、未來的成長、與安全感。',
+   tip:'沒有標準答案，但「比例」會透露你真正的優先順序。',
+   choices:[
+     {t:'40%投資、30%備用金、20%享樂、10%學習',h:'四方兼顧的經典配置。',m:['平衡++','可持續'],e:{cash:24000,asset:32000,happy:8,stress:-8},r:'你讓每個目標都有位置。平衡型的優勢就在這裡——不極端，所以走得遠。',asset:'invest',lt:{type:'invest',amount:500,label:'均衡配置'}},
+     {t:'大部分投資，只留一點享樂',h:'偏成長，但別忘了當下。',m:['成長+','現在少'],e:{asset:50000,cash:10000,happy:3,stress:-2},r:'你偏向未來，這很好。只要記得：完全沒有當下的快樂，計畫也很難長期維持。'},
+     {t:'大部分享樂，剩下隨意',h:'偏當下，未來準備不足。',m:['快樂++','成長-'],e:{cash:-10000,happy:18,stress:4},r:'你享受了當下。偶爾這樣沒問題，但若每筆意外之財都這樣花，平衡就會慢慢傾斜。'},
+     {t:'全部投資，一點都不留給自己',h:'過度自律，少了喘息。',m:['存款++','壓抑'],e:{asset:64000,cash:8000,happy:-4,stress:6},r:'你把所有錢投向未來。紀律很強，但平衡型的甜蜜點，是讓現在的自己也分到一塊。'},
+   ],
+   lesson:'平衡型理財心法：用固定比例分配（投資／備用金／享樂／成長），讓每個目標都被照顧，最容易長期堅持。'},
+];
+
+// Extra kids questions — deeper personalization for parents
+const Q_KIDS_EXTRA = [
+  {id:'k2',age:null,phase:'教育基金',iconName:'graduationCap',scene:'family',
+   req:{kids:true},
+   title:'要不要現在就開始存孩子的大學基金？',
+   desc:'孩子還小，但大學學費18年後可能更貴。你在想要不要現在就開始準備教育基金。',
+   tip:'教育基金最強的武器是「時間」。越早開始，每月要存的金額越少。',
+   choices:[
+     {t:'每月定期定額買ETF當教育基金',h:'用複利讓時間幫你存。',m:['複利+','提前準備'],e:{asset:8000,cash:-4000,happy:5,stress:-4},r:'你讓18年的複利為孩子工作。每月3,000元、年報酬7%，18年後約130萬——時間是最便宜的學費來源。',asset:'family',lt:{type:'invest',amount:300,label:'教育基金定期定額'}},
+     {t:'買儲蓄型保險當教育金',h:'感覺安全，但報酬偏低、資金被鎖。',m:['保守','報酬-'],e:{expense:6000,happy:2,stress:2},r:'儲蓄險強迫儲蓄，但報酬通常追不上ETF，資金也被鎖很多年。先想清楚你要的是保障還是成長。'},
+     {t:'先顧好自己的退休，教育金以後再說',h:'務實：退休不能貸款，學費可以。',m:['務實','優先自己'],e:{cash:6000,asset:3000,happy:3,stress:-3},r:'這其實是專家常給的提醒：孩子能申請就學貸款，但你的退休不行。先穩住自己，才有餘力幫孩子。'},
+     {t:'全力存教育金，犧牲自己的投資',h:'愛，但可能本末倒置。',m:['為孩子+','自己-'],e:{cash:-8000,happy:4,stress:8},r:'你的心意很暖，但若因此犧牲自己的退休準備，未來反而可能變成孩子的負擔。平衡才是真的為孩子好。'},
+   ],
+   lesson:'教育基金順序：先顧好自己的緊急備用金與退休，再用「時間+定期定額」幫孩子準備。學費可貸款，退休不行。'},
+];
+
 // ── ELIGIBILITY ENGINE ─────────────────────────────────────────
 function checkEligibility(q, profile) {
   // profile: {age, housing, married, kids, insurance, invest}
@@ -1885,6 +1963,9 @@ function checkEligibility(q, profile) {
       if (profile.age < val) return false;
     } else if (key === 'age_max') {
       if (profile.age > val) return false;
+    } else if (key === 'trait_any') {
+      // Special: trait must be one of the listed values
+      if (!val.includes(profile.trait)) return false;
     } else {
       // Boolean tag check
       if (profile[key] !== val) return false;
@@ -1917,7 +1998,7 @@ function buildAgeQuestions(age, tags, housing){
 }
 
 function buildPersonalizedQuestions(prof){
-  const {age, housing, married, kids, invest, insurance} = prof;
+  const {age, housing, married, kids, invest, insurance, trait} = prof;
 
   // ── Collect pools ─────────────────────────────────────────────
   let pool = [];
@@ -1936,7 +2017,9 @@ function buildPersonalizedQuestions(prof){
   // Relationship
   if(!married)  pool.push(...Q_SINGLE);
   if(married)   pool.push(...Q_MARRIED);
-  if(kids)      pool.push(...Q_HAS_KIDS);
+
+  // Kids — deeper personalization for parents
+  if(kids)      pool.push(...Q_HAS_KIDS, ...Q_KIDS_EXTRA);
 
   // Insurance
   if(!insurance) pool.push(...Q_NO_INSURANCE);
@@ -1944,6 +2027,10 @@ function buildPersonalizedQuestions(prof){
   // Investment
   if(invest)   pool.push(...Q_INVESTOR);
   else         pool.push(...Q_NO_INVEST);
+
+  // Financial mindset (理財觀 / personality trait) — signature question
+  const TRAIT_POOLS = {enjoy:Q_TRAIT_ENJOY, anxious:Q_TRAIT_ANXIOUS, ambitious:Q_TRAIT_AMBITIOUS, balanced:Q_TRAIT_BALANCED};
+  if(TRAIT_POOLS[trait]) pool.push(...TRAIT_POOLS[trait]);
 
   // Always include multi-type questions for variety
   pool.push(...Q_MULTI_TYPE);
@@ -1959,21 +2046,28 @@ function buildPersonalizedQuestions(prof){
     return true;
   });
 
-  // ── Ensure category coverage (1 of each key type) ─────────────
-  const required = ['values','budget','insurance','investment','housing_career'];
+  // ── Selection ──────────────────────────────────────────────────
+  const CAP = 7;
   const selected = [];
   const used = new Set();
-  // First pass: one per required category
+  const take = q => { if(q && !used.has(q.id)){ selected.push(q); used.add(q.id); } };
+
+  // 1) Guarantee the financial-mindset (理財觀) signature question shows up
+  take(deduped.find(q => q.req && q.req.trait === trait));
+
+  // 2) Guarantee a kids-specific question for parents
+  if(kids) take(deduped.find(q => q.req && q.req.kids === true));
+
+  // 3) Ensure coverage of key categories (1 of each where available)
+  const required = ['values','budget','insurance','investment','housing_career'];
   required.forEach(cat => {
-    const match = deduped.find(q => !used.has(q.id) && (q.category===cat || (cat==='investment'&&q.category==='investment') || (cat==='housing_career'&&(q.category==='housing'||q.category==='career'))));
-    if(match){ selected.push(match); used.add(match.id); }
-  });
-  // Fill remaining slots
-  deduped.forEach(q => {
-    if(!used.has(q.id) && selected.length < 7){ selected.push(q); used.add(q.id); }
+    take(deduped.find(q => !used.has(q.id) && (q.category===cat || (cat==='housing_career'&&(q.category==='housing'||q.category==='career')))));
   });
 
-  return selected.slice(0,7);
+  // 4) Fill remaining slots in pool order
+  deduped.forEach(q => { if(selected.length < CAP) take(q); });
+
+  return selected.slice(0, CAP);
 }
 
 function smartSort(questions) {
