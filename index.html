@@ -360,7 +360,13 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0}
 
 /* ── RANKING ── */
 .rank-wrap{display:flex;flex-direction:column;gap:8px}
-.rank-item{display:flex;align-items:center;gap:12px;background:var(--bg3);border:1.5px solid var(--border);border-radius:14px;padding:13px 14px;transition:all .2s}
+.rank-item{display:flex;align-items:center;gap:12px;background:var(--bg3);border:1.5px solid var(--border);border-radius:14px;padding:13px 14px;transition:border-color .2s,background .2s,box-shadow .2s,transform .2s;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.rank-item:active{cursor:grabbing}
+.rank-item.dragging{cursor:grabbing;border-color:var(--gold);background:var(--bg2);box-shadow:0 12px 32px rgba(0,0,0,.5);transform:scale(1.025);position:relative;z-index:5}
+.rank-grip{display:flex;flex-direction:column;gap:3px;color:var(--muted2);flex-shrink:0;padding:2px 1px;transition:color .15s}
+.rank-grip span{display:block;width:16px;height:2px;border-radius:2px;background:currentColor}
+.rank-item:hover .rank-grip{color:var(--gold)}
+.rank-hint{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:10px}
 .rank-num{width:32px;height:32px;border-radius:50%;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.25);color:var(--gold);font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .rank-text{flex:1}
 .rank-text h4{font-size:14px;font-weight:700;margin-bottom:2px}
@@ -610,6 +616,7 @@ svg.icon{display:inline-block;vertical-align:middle;flex-shrink:0}
       </div>
       <!-- ranking -->
       <div id="rankingArea" style="display:none;padding:0 2px">
+        <div class="rank-hint">拖曳卡片即可調整順序（也可用 ▲▼ 按鈕）</div>
         <div class="rank-wrap" id="rankingList"></div>
         <div class="rank-submit">
           <button class="btn btn-gold" onclick="submitRanking()" id="rankSubmitBtn"></button>
@@ -2175,7 +2182,8 @@ function renderRankList(){
   const {order,q}=S.qState;
   document.getElementById('rankingList').innerHTML=order.map((itemIdx,pos)=>{
     const item=q.items[itemIdx];
-    return `<div class="rank-item">
+    return `<div class="rank-item" data-pos="${pos}" onpointerdown="rankDragStart(event,${pos})">
+      <div class="rank-grip" aria-hidden="true"><span></span><span></span><span></span></div>
       <div class="rank-num">${pos+1}</div>
       <div class="rank-text"><h4>${item.label}</h4>${item.hint?`<p>${item.hint}</p>`:''}</div>
       <div class="rank-arrows">
@@ -2191,6 +2199,48 @@ function moveRank(pos,dir){
   if(np<0||np>=order.length) return;
   [order[pos],order[np]]=[order[np],order[pos]];
   renderRankList();
+}
+/* ── Drag-and-drop ranking (mouse + touch via Pointer Events) ── */
+var rankDrag=null;
+function rankDragStart(e,pos){
+  // Let the ▲▼ buttons keep working — don't start a drag from them.
+  if(e.target.closest('.rank-btn')) return;
+  if(e.button!==undefined && e.button!==0) return; // left button / touch only
+  e.preventDefault();
+  rankDrag={pos};
+  const list=document.getElementById('rankingList');
+  if(list.children[pos]) list.children[pos].classList.add('dragging');
+  document.addEventListener('pointermove',rankDragMove);
+  document.addEventListener('pointerup',rankDragEnd);
+  document.addEventListener('pointercancel',rankDragEnd);
+}
+function rankDragMove(e){
+  if(!rankDrag) return;
+  e.preventDefault();
+  const list=document.getElementById('rankingList');
+  const items=[...list.children];
+  const y=e.clientY;
+  // Find the slot whose vertical midpoint the pointer has crossed.
+  let target=items.length-1;
+  for(let i=0;i<items.length;i++){
+    const r=items[i].getBoundingClientRect();
+    if(y < r.top + r.height/2){ target=i; break; }
+  }
+  if(target!==rankDrag.pos){
+    const {order}=S.qState;
+    const [moved]=order.splice(rankDrag.pos,1);
+    order.splice(target,0,moved);
+    rankDrag.pos=target;
+    renderRankList();
+    if(list.children[target]) list.children[target].classList.add('dragging');
+  }
+}
+function rankDragEnd(){
+  document.removeEventListener('pointermove',rankDragMove);
+  document.removeEventListener('pointerup',rankDragEnd);
+  document.removeEventListener('pointercancel',rankDragEnd);
+  document.querySelectorAll('#rankingList .rank-item.dragging').forEach(el=>el.classList.remove('dragging'));
+  rankDrag=null;
 }
 function submitRanking(){
   const {order,q}=S.qState;
